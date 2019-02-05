@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const IgnoreNotFoundExportPlugin = require("./IgnoreNotFoundExportPlugin.js");
 
 module.exports = merge(common, {
   entry: {
@@ -78,6 +79,12 @@ module.exports = merge(common, {
         use: [
           'style-loader', // creates style nodes from JS strings
           'css-loader', // translates CSS into CommonJS
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: { path: __dirname + '/postcss.config.js' },
+            },
+          },
           'sass-loader', // compiles Sass to CSS
         ],
       },
@@ -105,5 +112,6 @@ module.exports = merge(common, {
         NODE_ENV: JSON.stringify('development'),
       },
     }),
+    new IgnoreNotFoundExportPlugin(),
   ],
 });
