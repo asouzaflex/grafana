@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { getAngularLoader, AngularComponent } from 'app/core/services/AngularLoader';
+import { getAngularLoader, AngularComponent } from '@grafana/runtime';
 import { EditorTabBody } from './EditorTabBody';
 
 import { PanelModel } from '../state/PanelModel';
@@ -44,7 +44,7 @@ export class GeneralTab extends PureComponent<Props> {
 
   render() {
     return (
-      <EditorTabBody heading="Panel Options" toolbarItems={[]}>
+      <EditorTabBody heading="General" toolbarItems={[]}>
         <div ref={element => (this.element = element)} />
       </EditorTabBody>
     );

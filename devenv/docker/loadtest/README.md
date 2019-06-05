@@ -6,9 +6,12 @@ Runs load tests and checks using [k6](https://k6.io/).
 
 Docker
 
+To run the auth proxy test you'll need to setup nginx proxy from docker block and
+enable auth proxy together with configuring Grafana for auth proxy.
+
 ## Run
 
-Run load test for 15 minutes:
+Run load test for 15 minutes using 2 virtual users and targeting http://localhost:3000.
 
 ```bash
 $ ./run.sh
@@ -19,6 +22,25 @@ Run load test for custom duration:
 ```bash
 $ ./run.sh -d 10s
 ```
+
+Run load test for custom target url:
+
+```bash
+$ ./run.sh -u http://grafana.loc
+```
+
+Run load test for 10 virtual users:
+
+```bash
+$ ./run.sh -v 10
+```
+
+Run auth proxy test:
+
+```bash
+$ ./run.sh -c auth_proxy_test
+```
+
 
 Example output:
 

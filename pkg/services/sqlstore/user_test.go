@@ -175,6 +175,40 @@ func TestUserDataAccess(t *testing.T) {
 					So(found, ShouldBeTrue)
 				})
 			})
+
+			Convey("When batch disabling users", func() {
+				userIdsToDisable := []int64{}
+				for i := 0; i < 3; i++ {
+					userIdsToDisable = append(userIdsToDisable, users[i].Id)
+				}
+				disableCmd := m.BatchDisableUsersCommand{UserIds: userIdsToDisable, IsDisabled: true}
+
+				err = BatchDisableUsers(&disableCmd)
+				So(err, ShouldBeNil)
+
+				Convey("Should disable all provided users", func() {
+					query := m.SearchUsersQuery{}
+					err = SearchUsers(&query)
+
+					So(query.Result.TotalCount, ShouldEqual, 5)
+					for _, user := range query.Result.Users {
+						shouldBeDisabled := false
+
+						// Check if user id is in the userIdsToDisable list
+						for _, disabledUserId := range userIdsToDisable {
+							if user.Id == disabledUserId {
+								So(user.IsDisabled, ShouldBeTrue)
+								shouldBeDisabled = true
+							}
+						}
+
+						// Otherwise user shouldn't be disabled
+						if !shouldBeDisabled {
+							So(user.IsDisabled, ShouldBeFalse)
+						}
+					}
+				})
+			})
 		})
 
 		Convey("Given one grafana admin user", func() {
@@ -208,7 +242,7 @@ func TestUserDataAccess(t *testing.T) {
 func GetOrgUsersForTest(query *m.GetOrgUsersQuery) error {
 	query.Result = make([]*m.OrgUserDTO, 0)
 	sess := x.Table("org_user")
-	sess.Join("LEFT ", "user", fmt.Sprintf("org_user.user_id=%s.id", x.Dialect().Quote("user")))
+	sess.Join("LEFT ", x.Dialect().Quote("user"), fmt.Sprintf("org_user.user_id=%s.id", x.Dialect().Quote("user")))
 	sess.Where("org_user.org_id=?", query.OrgId)
 	sess.Cols("org_user.org_id", "org_user.user_id", "user.email", "user.login", "org_user.role")
 

@@ -121,7 +121,7 @@ func GetUserTeams(c *m.ReqContext) Response {
 	return getUserTeamList(c.OrgId, c.ParamsInt64(":id"))
 }
 
-func getUserTeamList(userID int64, orgID int64) Response {
+func getUserTeamList(orgID int64, userID int64) Response {
 	query := m.GetTeamsByUserQuery{OrgId: orgID, UserId: userID}
 
 	if err := bus.Dispatch(&query); err != nil {
@@ -202,7 +202,7 @@ func (hs *HTTPServer) ChangeActiveOrgAndRedirectToHome(c *m.ReqContext) {
 }
 
 func ChangeUserPassword(c *m.ReqContext, cmd m.ChangeUserPasswordCommand) Response {
-	if setting.LdapEnabled || setting.AuthProxyEnabled {
+	if setting.LDAPEnabled || setting.AuthProxyEnabled {
 		return Error(400, "Not allowed to change password when LDAP or Auth Proxy is enabled", nil)
 	}
 

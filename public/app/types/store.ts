@@ -1,4 +1,6 @@
-import { NavIndex } from './navModel';
+import { ThunkAction, ThunkDispatch as GenericThunkDispatch } from 'redux-thunk';
+import { ActionOf } from 'app/core/redux';
+
 import { LocationState } from './location';
 import { AlertRulesState } from './alerting';
 import { TeamsState, TeamState } from './teams';
@@ -10,6 +12,8 @@ import { UsersState, UserState } from './user';
 import { OrganizationState } from './organization';
 import { AppNotificationsState } from './appNotifications';
 import { PluginsState } from './plugins';
+import { NavIndex } from '@grafana/ui';
+import { ApplicationState } from './application';
 
 export interface StoreState {
   navIndex: NavIndex;
@@ -26,4 +30,12 @@ export interface StoreState {
   appNotifications: AppNotificationsState;
   user: UserState;
   plugins: PluginsState;
+  application: ApplicationState;
 }
+
+/*
+ * Utility type to get strongly types thunks
+ */
+export type ThunkResult<R> = ThunkAction<R, StoreState, undefined, ActionOf<any>>;
+
+export type ThunkDispatch = GenericThunkDispatch<StoreState, undefined, any>;

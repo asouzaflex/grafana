@@ -60,6 +60,16 @@ describe('file_export', () => {
 
       expect(text).toBe(expectedText);
     });
+
+    it('should not modify series.datapoints', () => {
+      const expectedSeries1DataPoints = ctx.seriesList[0].datapoints.slice();
+      const expectedSeries2DataPoints = ctx.seriesList[1].datapoints.slice();
+
+      fileExport.convertSeriesListToCsvColumns(ctx.seriesList, ctx.timeFormat);
+
+      expect(expectedSeries1DataPoints).toEqual(ctx.seriesList[0].datapoints);
+      expect(expectedSeries2DataPoints).toEqual(ctx.seriesList[1].datapoints);
+    });
   });
 
   describe('when exporting table data to csv', () => {
@@ -82,6 +92,7 @@ describe('file_export', () => {
           [0x123, 'some string with \n in the middle', 10.01, false],
           [0b1011, 'some string with ; in the middle', -12.34, true],
           [123, 'some string with ;; in the middle', -12.34, true],
+          [1234, '=a bogus formula  ', '-and another', '+another', '@ref'],
         ],
       };
 
@@ -98,7 +109,8 @@ describe('file_export', () => {
         '501;"some string with "" at the end""";0.01;false\r\n' +
         '291;"some string with \n in the middle";10.01;false\r\n' +
         '11;"some string with ; in the middle";-12.34;true\r\n' +
-        '123;"some string with ;; in the middle";-12.34;true';
+        '123;"some string with ;; in the middle";-12.34;true\r\n' +
+        '1234;"\'=a bogus formula";"\'-and another";"\'+another";"\'@ref"';
 
       expect(returnedText).toBe(expectedText);
     });
